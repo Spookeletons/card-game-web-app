@@ -2,21 +2,24 @@ const cardList = document.querySelector('.cardList');
 const content = document.getElementsByClassName('content');
 const scoreTag = document.getElementById('score');
 
-buildBoard();
+let board = [];
+board = buildBoard();
 
 let score = 0;
 
 let interval = setInterval(function() {
-    addCard(cardList.children.length + 1)
+    addCard('right')
 }, 2000);
 
 cardList.addEventListener('click', function(e){
-    console.log(e.target);
-    if(e.target.matches('.cardList')){
+    let target = e.target
+    console.log(target);
+    if(target.matches('.cardList')){
         return
     }
-    if(e.target.classList.contains('active')){
+    if(target.classList.contains('active')){
         score += 1;
+
         scoreTag.innerHTML = `${score}`;
         e.target.classList.remove('active');
         e.target.classList.add('inactive');
@@ -24,28 +27,57 @@ cardList.addEventListener('click', function(e){
         return
     }
     else{
-        score += 2;
+        target.innerHTML = target.value;
+        if(target.value === 'normal'){
+            score += 2;
+        }else if(target.value === 'poison'){
+            score -= 3;
+        }else{
+            score += 5;
+        }
         scoreTag.innerHTML = `${score}`;
+        if(target.value === 'poison'){
+            setTimeout(function(){
+                target.remove();
+            }, 3000);
+        }
     }
     e.target.remove();
     let children = cardList.children;
     if(children.length<1){
         clearInterval(interval);
-        content.innerHTML = `SCORE = ${score}`;
     }
 
 })
 
-function addCard(value){
+function addCard(isNum){
+    let value;
     let card = document.createElement('div');
+    let random = Math.ceil(Math.random()*12);
+    if(random < 9){
+        value = 'normal';
+    }else if(random < 12){
+        value = 'poison';
+    }else{
+        value = 'golden';
+    }
+    card.value = value;
     card.classList.add('card');
     card.classList.add('active');
-    card.innerHTML = value;
+    if(isNum === 'wrong'){
+        card.innerHTML = 'starter';
+    }else{
+        let num = cardList.children.length;
+        card.innerHTML = `${num}`;
+    }
+
     cardList.appendChild(card);
 }
 
 function buildBoard(){
+    let board = [];
     for(let i=0;i<12;i++){
-        addCard('starter');
+        let newCard = addCard('wrong');
+        board.push(newCard);
     }
 }
