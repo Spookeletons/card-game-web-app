@@ -2,8 +2,11 @@ const cardList = document.querySelector('.cardList');
 const content = document.getElementsByClassName('content');
 const scoreTag = document.getElementById('score');
 
-let board = [];
-board = buildBoard();
+buildBoard();
+setTimeout(function(){
+    cardList.innerHTML = "";
+    clearInterval(interval);
+}, 2*60*1000)
 
 let score = 0;
 
@@ -21,17 +24,19 @@ cardList.addEventListener('click', function(e){
         score += 1;
 
         scoreTag.innerHTML = `${score}`;
-        e.target.classList.remove('active');
-        e.target.classList.add('inactive');
-
+        target.classList.remove('active');
+        target.classList.add('inactive');
+        target.innerHTML = `${target.value}`;
+        setTimeout(function(){
+            target.remove();
+        }, 3000);
         return
     }
     else{
-        target.innerHTML = target.value;
         if(target.value === 'normal'){
             score += 2;
         }else if(target.value === 'poison'){
-            score -= 3;
+            score -= 10;
         }else{
             score += 5;
         }
